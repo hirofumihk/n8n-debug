@@ -81,7 +81,7 @@ export class SourceControlController {
 					}
 				} catch (error) {
 					// if initialization fails, run cleanup to remove any intermediate state and throw the error
-					// [DEBUG] await this.sourceControlService.disconnect({ keepKeyPair: true });
+					await this.sourceControlService.disconnect({ keepKeyPair: true });
 					throw error;
 				}
 			}
