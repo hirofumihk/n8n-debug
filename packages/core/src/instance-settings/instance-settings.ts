@@ -52,7 +52,7 @@ export class InstanceSettings {
 	readonly instanceId: string;
 
 	readonly instanceType: InstanceType;
-
+　
 	constructor(
 		private readonly config: InstanceSettingsConfig,
 		private readonly logger: Logger,

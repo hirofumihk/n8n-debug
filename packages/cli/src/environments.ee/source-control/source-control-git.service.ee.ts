@@ -78,18 +78,21 @@ export class SourceControlGitService {
 
 		this.preInitCheck();
 		this.logger.debug('Git pre-check passed');
-
+		// ここ以降でエラー
 		sourceControlFoldersExistCheck([gitFolder, sshFolder]);
-
+		this.logger.debug('[DEBUG] sourceControlFoldersExistCheck passed');
 		await this.setGitSshCommand(gitFolder, sshFolder);
-
+		this.logger.debug('[DEBUG] setGitSshCommand passed');
 		if (!(await this.checkRepositorySetup())) {
+			this.logger.debug('[DEBUG] checkRepositorySetup passed');
 			await (this.git as unknown as SimpleGit).init();
+			this.logger.debug('[DEBUG] (this.git as unknown as SimpleGit).init() passed');
 		}
 		if (!(await this.hasRemote(sourceControlPreferences.repositoryUrl))) {
 			if (sourceControlPreferences.connected && sourceControlPreferences.repositoryUrl) {
 				const instanceOwner = await this.ownershipService.getInstanceOwner();
 				await this.initRepository(sourceControlPreferences, instanceOwner);
+				this.logger.debug('[DEBUG] this.initRepository(sourceControlPreferences, instanceOwner) passed');
 			}
 		}
 	}
@@ -144,15 +147,21 @@ export class SourceControlGitService {
 			throw new UnexpectedError('Git is not initialized (async)');
 		}
 		try {
+			// おそらくここの中でエラー
+			this.logger.debug('[DEBUG] before getRemotes execution');
 			const remotes = await this.git.getRemotes(true);
+			this.logger.debug('[DEBUG] getRemotes passed');
 			const foundRemote = remotes.find(
 				(e) => e.name === SOURCE_CONTROL_ORIGIN && e.refs.push === remote,
 			);
+			this.logger.debug('[DEBUG] foundRemote passed');
 			if (foundRemote) {
 				this.logger.debug(`Git remote found: ${foundRemote.name}: ${foundRemote.refs.push}`);
 				return true;
 			}
 		} catch (error) {
+			this.logger.debug('[DEBUG] Git is not initialized Error');
+			this.logger.debug(error);
 			throw new UnexpectedError('Git is not initialized', { cause: error });
 		}
 		this.logger.debug(`Git remote not found: ${remote}`);
